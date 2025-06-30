@@ -26,7 +26,7 @@ const Header = () => {
               placeholder="Search for anything...."
               className="flex-1 px-4 py-3 text-black placeholder-[#475569] focus:outline-none"
             />
-            <button className="flex items-center justify-center bg-teal-500 px-4 hover:bg-teal-600 transition-colors">
+            <button className="flex items-center justify-center bg-[#00B795] px-4 hover:bg-teal-600 transition-colors">
               <Image
                 src="/header/search.png"
                 alt="logo"

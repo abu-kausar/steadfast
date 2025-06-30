@@ -1,4 +1,5 @@
 "use client"
+import AddSubComponent from "@/components/AddSubComponent";
 import DelivaryCard from "@/components/DelivaryCard";
 import SellerReviewCard from "@/components/SellerReviewCard";
 import SpecificationCard from "@/components/SpecificationCard";
@@ -144,19 +145,7 @@ export default function Home() {
 
               <div className="flex flex-col gap-1">
                   <p className="text-base font-medium text-[#171717]">Quantity</p>
-                  <div className="max-w-[195px] flex p-1 items-center justify-between border rounded-[50px] border-[#E2E8F0]">
-                    <button 
-                      onClick={() => setQuantity(quantity - 1)} 
-                      className="w-8 h-8 rounded-full bg-[#F1F5F9] cursor-pointer"
-                    >-</button>
-
-                    <p className="text-base text-[#252B42] font-medium">{quantity}</p>
-
-                    <button 
-                      onClick={() => setQuantity(quantity + 1)} 
-                      className="w-8 h-8 rounded-full bg-[#F1F5F9] cursor-pointer"
-                    >+</button>
-                  </div>
+                  <AddSubComponent quantity={quantity} setQuantity={setQuantity}/>
               </div>
 
               <button className="mt-4 bg-[#00A788] text-white cursor-pointer p-[10px] w-[412px] h-[48px] rounded-sm">
