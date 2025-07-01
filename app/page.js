@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import toast from 'react-hot-toast';
 import { useCart } from "@/context/CartContext";
+import Loader from "@/components/Loader";
+import Button from "@/components/Button";
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -22,7 +24,7 @@ export default function Home() {
     }
   }, [data]);
 
-  if (loading) return <p>Loading product details...</p>;
+  if (loading) return <Loader loadingText={"product details"} />;
   if (error) return <p>Error: {error.message}</p>;
 
   console.log(
@@ -51,6 +53,7 @@ export default function Home() {
         selectedVariation?.variation_attributes?.[0]?.attribute_option?.attribute_value || "",
       imageUrl: imageUrl,
       sellerName: data?.merchant?.shop_name || "",
+      shippingCost: selectedVariation?.id_delivery_fee || 0
     };
 
     addToCart(cartItem);
@@ -174,12 +177,7 @@ export default function Home() {
                   <AddSubComponent quantity={quantity} setQuantity={setQuantity}/>
               </div>
 
-              <button 
-                onClick={handleAddToCart}
-                className="mt-4 bg-[#00A788] text-white cursor-pointer p-[10px] w-[412px] h-[48px] rounded-sm"
-              >
-                Add to Cart
-              </button>
+              <Button onClick={handleAddToCart} width='full' text='Add to Cart'/>
             </div>
           </div>
 

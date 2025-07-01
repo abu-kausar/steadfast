@@ -14,6 +14,7 @@ const initialCartItem = {
   ramSize: "",
   imageUrl: "",
   sellerName: "",
+  shippingCost: 0,
 };
 
 export function CartProvider({ children }) {
@@ -33,8 +34,16 @@ export function CartProvider({ children }) {
     localStorage.setItem("addedToCart", JSON.stringify(item));
   };
 
+  // Function to remove item from cart (clear it)
+  const removeFromCart = () => {
+    setCartItem(initialCartItem);
+    localStorage.removeItem("addedToCart");
+  };
+
   return (
-    <CartContext.Provider value={{ cartItem, addToCart }}>
+    <CartContext.Provider
+      value={{ cartItem, addToCart, removeFromCart }}
+    >
       {children}
     </CartContext.Provider>
   );
