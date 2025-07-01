@@ -10,9 +10,7 @@ export default function useProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          "http://157.230.240.97:9999/api/v1/product/iphone-15-plus"
-        );
+        const response = await axios.get("/api/productDetails");
         setData(response.data.data);
       } catch (err) {
         setError(err);
