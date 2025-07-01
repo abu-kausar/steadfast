@@ -3,7 +3,7 @@ import React from 'react'
 
 const reviews = [{title: "Ship on Time", value: 100}, {title: "Chat Response", value: 96},{title: "Shop Rating", value: 99.8}];
 
-const SellerReviewCard = () => {
+const SellerReviewCard = ({sellerName}) => {
   return (
     <div className='flex flex-col gap-3 px-4 py-3 border border-[#E2E8F0] rounded-xl'>
         <p className='text-xs text-[#475569] font-normal'>Sold by</p>
@@ -18,7 +18,7 @@ const SellerReviewCard = () => {
             />
 
             <div className='flex flex-col gap-1'>
-                <p className='text-[14px] text-[#475569] font-normal flex gap-1'>BD FASHION HOUSE <span><img src="/verified-tick.png" alt="" className='h-5 w-5'/></span></p>
+                <p className='text-[14px] text-[#475569] font-normal flex gap-1 uppercase'>{sellerName} <span><img src="/verified-tick.png" alt="" className='h-5 w-5'/></span></p>
                 <Image
                     src="/rising-star.png"
                     alt="rising star"

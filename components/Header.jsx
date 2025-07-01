@@ -1,13 +1,18 @@
+"use client"
 import Image from 'next/image'
 import React from 'react'
 import Cart from './Cart'
+import Link from 'next/link'
+import { useCart } from '@/context/CartContext'
 
 const Header = () => {
+  const { cartItem } = useCart();
+
   return (
     <div className='flex flex-col custom-shadow'>
       <div className='bg-[#0F172A]'>
         <div className='w-[1280px] mx-auto py-3 flex items-center justify-between'>
-          <div className='flex items-center gap-3'>
+          <a href="/" className='flex items-center gap-3'>
             <Image
                 src="/footer/logo.png"
                 alt="logo"
@@ -18,7 +23,7 @@ const Header = () => {
             <p className='text-2xl font-bold text-white'>
               FALCON
             </p>
-          </div>
+          </a>
 
           <div className="flex bg-white w-full max-w-xl overflow-hidden rounded-sm">
             <input
@@ -38,7 +43,9 @@ const Header = () => {
           </div>
 
           <div className='flex items-center gap-4'>
-            <Cart count={28}/>
+            <Link href="/cart">
+              <Cart count={cartItem.quantity}/>
+            </Link>
 
             <Image
               src="/header/profile.png"

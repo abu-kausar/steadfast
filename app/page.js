@@ -3,28 +3,60 @@ import AddSubComponent from "@/components/AddSubComponent";
 import DelivaryCard from "@/components/DelivaryCard";
 import SellerReviewCard from "@/components/SellerReviewCard";
 import SpecificationCard from "@/components/SpecificationCard";
+import useProductDetails from "@/hooks/useProductDetails";
 import Image from "next/image";
-import { useState } from "react";
-import { IoChevronUpOutline, IoChevronDownOutline } from "react-icons/io5";
-
-const productDetails = {
-  title: "Men's Stylish & Fashionable Trendy Good Looking Long Sleeve Casual Shirt.",
-  ratings: {
-    rating: 4.7,
-    numberOfRatings: 2254
-  },
-  price: {
-    currentPrice: "৳1,139.33",
-    previosPrice: "৳1500"
-  },
-  availableSizes: [
-    "XL", "XS", "S", "M","L"
-  ]
-}
+import { useEffect, useState } from "react";
+import { IoChevronDownOutline } from "react-icons/io5";
+import toast from 'react-hot-toast';
+import { useCart } from "@/context/CartContext";
 
 export default function Home() {
-  const [selectedSize, setSelectedSize] = useState(productDetails.availableSizes[1]);
+  const { addToCart } = useCart();
+  const { data, loading, error } = useProductDetails();
+  const [selectedVariation, setSelectedVariation] = useState(null);
   const [quantity, setQuantity] = useState(0);
+
+  useEffect(() => {
+    if (data?.variations?.length > 0) {
+      setSelectedVariation(data.variations[0]);
+    }
+  }, [data]);
+
+  if (loading) return <p>Loading product details...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  console.log(
+    data
+  );
+
+  const imageUrl =
+  selectedVariation?.image && selectedVariation?.image !== ""
+    ? selectedVariation.image
+    : data.thumbnail;
+
+  const handleAddToCart = () => {
+    if (quantity < 1) {
+      toast.error("Please select at least 1 quantity");
+      return;
+    }
+
+    const cartItem = {
+      productName: data?.name || "",
+      quantity: quantity,
+      discount_price: selectedVariation?.discount_price || 0,
+      regular_price: selectedVariation?.regular_price || 0,
+      color:
+        selectedVariation?.variation_attributes?.[1]?.attribute_option?.attribute_value || "",
+      ramSize:
+        selectedVariation?.variation_attributes?.[0]?.attribute_option?.attribute_value || "",
+      imageUrl: imageUrl,
+      sellerName: data?.merchant?.shop_name || "",
+    };
+
+    addToCart(cartItem);
+
+    toast.success("Product added to cart successfully!");
+  };
 
   return (
     <div>
@@ -33,19 +65,20 @@ export default function Home() {
           <div className="flex w-3/4 gap-5">
             <div className="w-45/100 flex flex-col gap-2">
               <Image
-                src="/product.png"
+                src={imageUrl}
                 alt="product"
                 width={380}
                 height={380}
                 className='object-contain rounded-[5px]'
               />
 
-              <div className="w-[380px] flex justify-between">
+              <div className="w-[380px] flex cursor-pointer justify-between">
                 {
-                  Array(5).fill().map((variant, index) => (
+                  data?.variations?.map((variant, index) => (
                     <Image
+                      onClick={() => setSelectedVariation(variant)}
                       key={index}
-                      src="/product.png"
+                      src={variant.image}
                       alt="product"
                       width={68}
                       height={68}
@@ -57,11 +90,11 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="text-xl text-[#0F172A] font-medium">{productDetails.title}</p>
+              <p className="text-xl text-[#0F172A] font-medium capitalize">{data?.name}</p>
               
               <div className="flex justify-between items-center">
                 <div className="flex gap-2">
-                  <p>{productDetails.ratings.rating}</p>
+                  <p>{data?.rating_avg}</p>
                   <Image
                     src="/rating.png"
                     alt="product"
@@ -69,7 +102,7 @@ export default function Home() {
                     height={68}
                     className='object-contain rounded-[5px]'
                   />
-                  <p>{productDetails.ratings.numberOfRatings}</p>
+                  <p>{data?.rating_count}</p>
                   <IoChevronDownOutline  className="w-4 h-4" />
                 </div>
 
@@ -92,8 +125,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <p className="flex gap-2 text-2xl text-[#00A788] font-semibold">{productDetails.price.currentPrice}
-                <span className="text-base font-normal text-[#94A3B8]">{productDetails.price.previosPrice}</span>
+              <p className="flex gap-2 text-2xl text-[#00A788] font-semibold">৳{selectedVariation?.discount_price}
+                <span className="text-base font-normal text-[#94A3B8] line-through">৳{selectedVariation?.regular_price}</span>
               </p>
 
               <p className="flex items-center gap-2">Promotion 
@@ -107,38 +140,31 @@ export default function Home() {
               </p>
 
               <div className="flex gap-1 flex-col">
-                <p>Available Color: Navy Blue</p>
+                <p>Color:</p>
 
-                <div className="flex items-center gap-1">
-                  {
-                    Array(4).fill().map((vairant, index) => (
-                      <Image
-                      key={index}
-                      src="/product.png"
-                      alt="product"
-                      width={56}
-                      height={56}
-                      className='object-contain cursor-pointer'
-                    />
-                    ))
-                  }
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                    {selectedVariation?.variation_attributes?.[1] && 
+                      <span
+                        className="flex items-center justify-center cursor-pointer px-2 py-1 border border-[#00B795] rounded-sm"
+                      >
+                        {selectedVariation?.variation_attributes?.[1]?.attribute_option?.attribute_value}
+                      </span>
+                    }
+                  </div>
                 </div>
               </div>
 
               <div className="flex gap-1 flex-col">
-                <p>Select Size: XS</p>
+                <p>RAM:</p>
 
                 <div className="flex items-center gap-2">
-                  {
-                    productDetails.availableSizes.map((size, index) => (
-                      <span 
-                        key={index} 
-                        onClick={() => setSelectedSize(size)}
-                        className={`flex items-center justify-center cursor-pointer w-10 h-10 border ${selectedSize===size ? "border-[#00B795]" : "border-[#E2E8F0]"} rounded-sm`}
-                      >
-                        {size}
-                      </span>
-                    ))
+                  {selectedVariation?.variation_attributes?.[0] && 
+                    <span
+                      className="flex items-center justify-center cursor-pointer px-2 py-1 border border-[#00B795] rounded-sm"
+                    >
+                      {selectedVariation?.variation_attributes?.[0]?.attribute_option?.attribute_value}
+                    </span>
                   }
                 </div>
               </div>
@@ -148,7 +174,10 @@ export default function Home() {
                   <AddSubComponent quantity={quantity} setQuantity={setQuantity}/>
               </div>
 
-              <button className="mt-4 bg-[#00A788] text-white cursor-pointer p-[10px] w-[412px] h-[48px] rounded-sm">
+              <button 
+                onClick={handleAddToCart}
+                className="mt-4 bg-[#00A788] text-white cursor-pointer p-[10px] w-[412px] h-[48px] rounded-sm"
+              >
                 Add to Cart
               </button>
             </div>
@@ -156,7 +185,7 @@ export default function Home() {
 
           <div className="w-1/4 flex flex-col gap-2">
             <DelivaryCard/>
-            <SellerReviewCard/>
+            <SellerReviewCard sellerName={data?.merchant.shop_name}/>
           </div>
         </div>
       </div>
